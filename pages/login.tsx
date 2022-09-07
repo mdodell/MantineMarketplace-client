@@ -11,9 +11,41 @@ import {
   Box,
   Stack,
 } from '@mantine/core';
+import { z } from 'zod';
+import { useForm, zodResolver } from '@mantine/form';
 import { FULL_PAGE } from '../constants/styles';
 
+const loginSchema = z
+  .object({
+    username: z
+      .string({
+        required_error: 'Username is required',
+      })
+      .min(5, { message: 'Must be 5 or more characters long' })
+      .max(20, { message: 'Must be 20 or fewer characters long' }),
+    login: z.string().email({ message: 'Invalid email address' }),
+    password: z
+      .string()
+      .min(5, { message: 'Must be 5 or more characters long' })
+      .max(20, { message: 'Must be 20 or fewer characters long' }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
 export default function LoginPage() {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    initialValues: {
+      username: '',
+      login: '',
+      password: '',
+      confirmPassword: '',
+    },
+    validate: zodResolver(loginSchema),
+  });
+
   return (
     <Stack
       justify="center"
@@ -40,21 +72,43 @@ export default function LoginPage() {
         </Text>
 
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-          <Stack spacing="xs">
-            <TextInput label="Username" placeholder="10xDeveloper" required />
-            <TextInput label="Email" placeholder="you@mantine.dev" required />
-            <PasswordInput label="Password" placeholder="Your password" required />
-          </Stack>
+          <form onSubmit={form.onSubmit((values) => console.log('values'))} noValidate>
+            <Stack spacing="xs">
+              <TextInput
+                label="Username"
+                placeholder="10xDeveloper"
+                required
+                {...form.getInputProps('username')}
+              />
+              <TextInput
+                label="Email"
+                placeholder="you@mantine.dev"
+                required
+                {...form.getInputProps('login')}
+              />
+              <PasswordInput
+                label="Password"
+                placeholder="Your password"
+                required
+                {...form.getInputProps('password')}
+              />
+              <PasswordInput
+                label="Confirm Password"
+                placeholder="Your password"
+                required
+                {...form.getInputProps('confirmPassword')}
+              />
+            </Stack>
 
-          <Group position="apart" mt="md">
-            <Checkbox label="Remember me" />
-            <Anchor<'a'> onClick={(event) => event.preventDefault()} href="#" size="sm">
-              Forgot password?
-            </Anchor>
-          </Group>
-          <Button fullWidth mt="xl">
-            Sign in
-          </Button>
+            <Group position="right" mt="md">
+              <Anchor<'a'> onClick={(event) => event.preventDefault()} href="#" size="sm">
+                Forgot password?
+              </Anchor>
+            </Group>
+            <Button fullWidth mt="xl" type="submit">
+              Sign in
+            </Button>
+          </form>
         </Paper>
       </Box>
     </Stack>
