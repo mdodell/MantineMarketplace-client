@@ -19,6 +19,14 @@ export default createStyles((theme) => ({
     alignItems: 'center',
   },
 
+  logo: {
+    [theme.fn.smallerThan('lg')]: {
+      '& > a': {
+        display: 'none',
+      },
+    },
+  },
+
   dropdown: {
     position: 'absolute',
     top: HEADER_HEIGHT,
@@ -30,7 +38,7 @@ export default createStyles((theme) => ({
     borderTopWidth: 0,
     overflow: 'hidden',
 
-    [theme.fn.largerThan('sm')]: {
+    [theme.fn.largerThan('lg')]: {
       display: 'none',
     },
   },
@@ -41,14 +49,20 @@ export default createStyles((theme) => ({
     },
   },
 
+  dropdownSearch: {
+    [theme.fn.largerThan('xs')]: {
+      display: 'none',
+    },
+  },
+
   links: {
-    [theme.fn.smallerThan('sm')]: {
+    [theme.fn.smallerThan('lg')]: {
       display: 'none',
     },
   },
 
   burger: {
-    [theme.fn.largerThan('sm')]: {
+    [theme.fn.largerThan('lg')]: {
       display: 'none',
     },
   },
@@ -56,26 +70,33 @@ export default createStyles((theme) => ({
   link: {
     display: 'block',
     lineHeight: 1,
-    padding: '8px 12px',
+    padding: '6px 12px',
     borderRadius: theme.radius.sm,
     textDecoration: 'none',
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
     fontSize: theme.fontSizes.sm,
     fontWeight: 500,
+    '&:active': theme.activeStyles,
 
     '&:hover': {
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     },
 
-    [theme.fn.smallerThan('sm')]: {
+    [theme.fn.smallerThan('lg')]: {
       borderRadius: 0,
-      padding: theme.spacing.md,
+      padding: 0,
     },
   },
 
   linkActive: {
+    [theme.fn.largerThan('lg')]: {
+      '&, &:hover': {
+        backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
+          .background,
+        color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+      },
+    },
     '&, &:hover': {
-      backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
       color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
     },
   },

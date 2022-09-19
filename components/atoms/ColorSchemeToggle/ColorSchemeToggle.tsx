@@ -7,12 +7,16 @@ export default function ColorSchemeToggle() {
   return (
     <Group position="center">
       <ActionIcon
-        variant="subtle"
         onClick={() => toggleColorScheme()}
         size="lg"
-        radius="xl"
+        variant="light"
+        radius="sm"
         sx={(theme) => ({
           color: theme.colorScheme === 'dark' ? theme.colors.yellow[4] : theme.colors.blue[6],
+          height: '36px',
+          [theme.fn.smallerThan('lg')]: {
+            width: '100%',
+          },
         })}
       >
         {colorScheme === 'dark' ? (

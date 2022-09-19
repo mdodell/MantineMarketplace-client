@@ -7,7 +7,13 @@ import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core
 import { NotificationsProvider } from '@mantine/notifications';
 
 import Header from '@components/molecules/Header';
-import { LINKS } from '@constants/routes';
+import { LEFT_LINKS, RIGHT_LINKS } from '@constants/routes';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import Shield from '@providers/Shield';
+import AuthProvider from '@providers/AuthProvider';
+
+const queryClient = new QueryClient();
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
@@ -22,19 +28,26 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   return (
     <>
       <Head>
-        <title>MantineMarketplace</title>
+        <title>Mantine Marketplace</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
-      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-        <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-          <NotificationsProvider>
-            <Header links={LINKS} />
-            <Component {...pageProps} />
-          </NotificationsProvider>
-        </MantineProvider>
-      </ColorSchemeProvider>
+      <QueryClientProvider client={queryClient} contextSharing>
+        <ReactQueryDevtools initialIsOpen />
+        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+          <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+            <NotificationsProvider>
+              <AuthProvider>
+                <Shield>
+                  <Header rightLinks={RIGHT_LINKS} leftLinks={LEFT_LINKS} />
+                  <Component {...pageProps} />
+                </Shield>
+              </AuthProvider>
+            </NotificationsProvider>
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </QueryClientProvider>
     </>
   );
 }

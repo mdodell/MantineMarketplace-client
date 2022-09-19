@@ -1,5 +1,3 @@
-import { ROUTES } from '@constants/routes';
-import Link from 'next/link';
 import {
   TextInput,
   PasswordInput,
@@ -12,21 +10,25 @@ import {
   Box,
   Stack,
 } from '@mantine/core';
+import Link from 'next/link';
 import { useForm, zodResolver } from '@mantine/form';
 import { useAuth } from '@providers/AuthProvider';
-import { LoginParameters, loginSchema } from '@services/AuthClient';
+import { SignUpParameters, signUpSchema } from '@services/AuthClient';
+import { ROUTES } from '@constants/routes';
 import { FULL_PAGE } from '../constants/styles';
 
-export default function LoginPage() {
-  const form = useForm<LoginParameters>({
+export default function SignupPage() {
+  const form = useForm<SignUpParameters>({
     initialValues: {
+      userName: '',
       login: '',
       password: '',
+      passwordConfirmation: '',
     },
-    validate: zodResolver(loginSchema),
+    validate: zodResolver(signUpSchema),
   });
 
-  const { loginFn } = useAuth();
+  const { signUpFn } = useAuth();
 
   return (
     <Stack
@@ -44,32 +46,43 @@ export default function LoginPage() {
         })}
       >
         <Title align="center" sx={() => ({ fontWeight: 900 })}>
-          Welcome back!
+          Welcome!
         </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>
-          Don&apos;t already have an account?
-          <Link href={ROUTES.SIGNUP} passHref>
+          Already have an account?
+          <Link href={ROUTES.LOGIN} passHref>
             <Anchor<'a'> size="sm" ml="xs">
-              Register
+              Login
             </Anchor>
           </Link>
         </Text>
 
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-          <form onSubmit={form.onSubmit((formData) => loginFn(formData))} noValidate>
+          <form onSubmit={form.onSubmit((values) => signUpFn(values))} noValidate>
             <Stack spacing="xs">
+              <TextInput
+                label="Username"
+                placeholder="10xDeveloper"
+                required
+                {...form.getInputProps('userName')}
+              />
               <TextInput
                 label="Email"
                 placeholder="you@mantine.dev"
                 required
                 {...form.getInputProps('login')}
               />
-
               <PasswordInput
                 label="Password"
                 placeholder="Your password"
                 required
                 {...form.getInputProps('password')}
+              />
+              <PasswordInput
+                label="Confirm Password"
+                placeholder="Your password"
+                required
+                {...form.getInputProps('passwordConfirmation')}
               />
             </Stack>
 
@@ -79,7 +92,7 @@ export default function LoginPage() {
               </Anchor>
             </Group>
             <Button fullWidth mt="xl" type="submit">
-              Sign in
+              Sign up
             </Button>
           </form>
         </Paper>
